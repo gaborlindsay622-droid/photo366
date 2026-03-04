@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2487.6">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="zh-TW"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;我的專屬相簿&lt;/title&gt;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"&gt;&lt;/script&gt;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* --- 基礎設定與排版 --- */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>header { background-color: #ffffff; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>h1 { margin: 0; font-size: 24px; color: #333; }</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* --- 按鈕樣式 --- */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn { padding: 10px 15px; margin-left: 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; transition: background 0.3s; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn-upload { background-color: #4285f4; color: white; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn-upload:hover { background-color: #3367d6; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn-qr { background-color: #34a853; color: white; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn-qr:hover { background-color: #2b803e; }</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* --- 相片牆 (響應式網格) --- */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; padding: 20px; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.gallery img { width: 100%; height: 250px; object-fit: cover; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.gallery img:hover { transform: scale(1.02); }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* --- 燈箱 (點擊放大後的視窗) --- */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>#lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; flex-direction: column; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>#lightbox img { max-width: 90%; max-height: 75vh; border-radius: 8px; margin-bottom: 20px; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.lightbox-controls { display: flex; gap: 15px; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn-close { position: absolute; top: 20px; right: 30px; font-size: 30px; color: white; cursor: pointer; background: none; border: none; }</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* --- 隱藏的原生上傳按鈕 --- */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>#file-upload { display: none; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* --- 列印專屬樣式 (列印時只顯示大圖，隱藏其他網頁元素) --- */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>@media print {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>body * { visibility: hidden; }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>#lightbox, #lightbox img { visibility: visible; }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>#lightbox { position: absolute; left: 0; top: 0; width: 100%; background: white; }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>#lightbox img { width: 100%; height: auto; max-height: 100%; margin: 0; border-radius: 0; }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>.lightbox-controls, .btn-close { display: none !important; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;header&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h1&gt;我的專屬相簿&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input type="file" id="file-upload" accept="image/*" multiple&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="btn btn-upload" onclick="document.getElementById('file-upload').click()"&gt;+ 上傳照片&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="btn btn-qr" onclick="generateQR()"&gt;產生 QR Code&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/header&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="gallery" id="gallery"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;img src="https://picsum.photos/id/1015/500/500" alt="風景照 1" onclick="openLightbox(this.src)"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;img src="https://picsum.photos/id/1016/500/500" alt="風景照 2" onclick="openLightbox(this.src)"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;img src="https://picsum.photos/id/1018/500/500" alt="風景照 3" onclick="openLightbox(this.src)"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;img src="https://picsum.photos/id/1019/500/500" alt="風景照 4" onclick="openLightbox(this.src)"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="lightbox"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn-close" onclick="closeLightbox()"&gt;×&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;img id="lightbox-img" src="" alt="放大照片"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="lightbox-controls"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;a id="download-link" href="" download="my_photo.jpg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn btn-upload"&gt;下載照片&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="btn btn-qr" onclick="window.print()"&gt;列印照片&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="qr-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; flex-direction: column;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="background: white; padding: 30px; border-radius: 10px; text-align: center; position: relative;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button onclick="closeQR()" style="position: absolute; top: 10px; right: 15px; border: none; background: none; font-size: 24px; cursor: pointer; color: #999;"&gt;×&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h2 style="margin-top: 0; color: #333; font-size: 18px;"&gt;掃描條碼分享相簿&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="qrcode-container" style="margin: 20px auto; display: flex; justify-content: center;"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p style="color: #666; font-size: 14px; margin-bottom: 0;"&gt;請用手機相機掃描上方 QR Code&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>// --- 燈箱互動邏輯 ---</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const lightbox = document.getElementById('lightbox');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const lightboxImg = document.getElementById('lightbox-img');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const downloadLink = document.getElementById('download-link');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function openLightbox(imageSrc) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>lightbox.style.display = 'flex';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>lightboxImg.src = imageSrc;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>downloadLink.href = imageSrc;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function closeLightbox() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>lightbox.style.display = 'none';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// --- 模擬上傳功能 ---</p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('file-upload').addEventListener('change', function(event) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const files = event.target.files;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (files.length &gt; 0) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>alert(`已選擇 ${files.length} 張照片。未來這裡將會串接 API 將照片傳送至雲端！`);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// --- 真實 QR Code 生成邏輯 ---</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const qrModal = document.getElementById('qr-modal');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const qrContainer = document.getElementById('qrcode-container');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let qrCodeGenerated = false;<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function generateQR() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>qrModal.style.display = 'flex';<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const currentUrl = window.location.href;<span class="Apple-converted-space"> </span></p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!qrCodeGenerated) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>qrContainer.innerHTML = ""; // 確保清空容器</p>
+<p class="p1"><span class="Apple-converted-space">                </span>new QRCode(qrContainer, {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>text: currentUrl,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>width: 200,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>height: 200,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>colorDark : "#000000",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>colorLight : "#ffffff",</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>correctLevel : QRCode.CorrectLevel.H<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">                </span>qrCodeGenerated = true;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function closeQR() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>qrModal.style.display = 'none';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
